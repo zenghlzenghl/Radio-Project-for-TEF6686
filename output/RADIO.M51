@@ -1,0 +1,456 @@
+BL51 BANKED LINKER/LOCATER V5.00                                                        10/21/2026  11:43:22  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V5.00, INVOKED BY:
+E:\KEIL\C51\BIN\BL51.EXE I2C_STC8H.OBJ, TEF6686.OBJ, KEY.OBJ, KEY_CONFIG.OBJ, RADIO_CTRL.OBJ, MAIN.OBJ TO RADIO.ABS
+
+
+MEMORY MODEL: LARGE
+
+
+INPUT MODULES INCLUDED:
+  I2C_STC8H.OBJ (I2C_STC8H)
+  TEF6686.OBJ (TEF6686)
+  KEY.OBJ (KEY)
+  KEY_CONFIG.OBJ (KEY_CONFIG)
+  RADIO_CTRL.OBJ (RADIO_CTRL)
+  MAIN.OBJ (MAIN_ENUM_EXAMPLE)
+  E:\KEIL\C51\LIB\C51L.LIB (?C_STARTUP)
+  E:\KEIL\C51\LIB\C51L.LIB (?C?CLDPTR)
+  E:\KEIL\C51\LIB\C51L.LIB (?C?CLDOPTR)
+  E:\KEIL\C51\LIB\C51L.LIB (?C?CSTOPTR)
+  E:\KEIL\C51\LIB\C51L.LIB (?C?UIDIV)
+  E:\KEIL\C51\LIB\C51L.LIB (?C?ILDOPTR)
+  E:\KEIL\C51\LIB\C51L.LIB (?C?IILDOPTR)
+  E:\KEIL\C51\LIB\C51L.LIB (?C?ISTOPTR)
+  E:\KEIL\C51\LIB\C51L.LIB (?C?PLDOPTR)
+  E:\KEIL\C51\LIB\C51L.LIB (PRINTF)
+  E:\KEIL\C51\LIB\C51L.LIB (?C_INIT)
+  E:\KEIL\C51\LIB\C51L.LIB (?C?CSTPTR)
+  E:\KEIL\C51\LIB\C51L.LIB (?C?IILDX)
+  E:\KEIL\C51\LIB\C51L.LIB (?C?PLDIDATA)
+  E:\KEIL\C51\LIB\C51L.LIB (?C?PLDXDATA)
+  E:\KEIL\C51\LIB\C51L.LIB (?C?PLDIXDATA)
+  E:\KEIL\C51\LIB\C51L.LIB (?C?PSTXDATA)
+  E:\KEIL\C51\LIB\C51L.LIB (?C?PLDPDATA)
+  E:\KEIL\C51\LIB\C51L.LIB (?C?PLDCODE)
+  E:\KEIL\C51\LIB\C51L.LIB (?C?CCASE)
+  E:\KEIL\C51\LIB\C51L.LIB (PUTCHAR)
+
+
+LINK MAP OF MODULE:  RADIO.ABS (I2C_STC8H)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0005H     UNIT         _DATA_GROUP_
+                    000DH     0013H                  *** GAP ***
+            BIT     0020H.0   0001H.1   UNIT         _BIT_GROUP_
+                    0021H.1   0000H.7                *** GAP ***
+            IDATA   0022H     0001H     UNIT         ?STACK
+
+            * * * * * * *  X D A T A   M E M O R Y  * * * * * * *
+            XDATA   0000H     0100H     UNIT         ?XD?I2C_STC8H
+            XDATA   0100H     0090H     UNIT         ?XD?KEY
+            XDATA   0190H     0032H     UNIT         _XDATA_GROUP_
+            XDATA   01C2H     0011H     UNIT         ?XD?TEF6686
+            XDATA   01D3H     000BH     UNIT         ?XD?RADIO_CTRL
+            XDATA   01DEH     0004H     UNIT         ?XD?MAIN_ENUM_EXAMPLE
+BL51 BANKED LINKER/LOCATER V5.00                                                      10/21/2026  11:43:22  PAGE 2
+
+
+            XDATA   01E2H     0001H     UNIT         ?XD?KEY_CONFIG
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     0008H     UNIT         ?PR?_KEY_SEEKUP_CALLBACK?KEY_CONFIG
+            CODE    000BH     0003H     ABSOLUTE     
+            CODE    000EH     0365H     UNIT         ?PR?PRINTF?PRINTF
+            CODE    0373H     0305H     UNIT         ?PR?KEY_SCAN?KEY
+            CODE    0678H     0234H     UNIT         ?C?LIB_CODE
+            CODE    08ACH     00DBH     UNIT         ?PR?KEY_INIT?KEY
+            CODE    0987H     0098H     UNIT         ?PR?_HANDLEKEYEVENT?MAIN_ENUM_EXAMPLE
+            CODE    0A1FH     008CH     UNIT         ?C_C51STARTUP
+            CODE    0AABH     008AH     UNIT         ?PR?MAIN?MAIN_ENUM_EXAMPLE
+            CODE    0B35H     0084H     UNIT         ?CO?MAIN_ENUM_EXAMPLE
+            CODE    0BB9H     0067H     UNIT         ?PR?TEF6686_POWERON?TEF6686
+            CODE    0C20H     0064H     UNIT         ?PR?_TEF6686_SEEKSTART?TEF6686
+            CODE    0C84H     0062H     UNIT         ?PR?TIMER0_ISR?MAIN_ENUM_EXAMPLE
+            CODE    0CE6H     005FH     UNIT         ?PR?_READTUNERREGISTER?TEF6686
+            CODE    0D45H     005DH     UNIT         ?PR?_TEF6686_TUNETOFREQ?TEF6686
+            CODE    0DA2H     005BH     UNIT         ?PR?KEY_CONFIG_INIT?KEY_CONFIG
+            CODE    0DFDH     005AH     UNIT         ?PR?_I2C_READ?I2C_STC8H
+            CODE    0E57H     0053H     UNIT         ?PR?KEY_CONFIG_SCAN?KEY_CONFIG
+            CODE    0EAAH     0047H     UNIT         ?PR?_RADIOCTRL_SETFREQ?RADIO_CTRL
+            CODE    0EF1H     0041H     UNIT         ?PR?_I2C_WRITE?I2C_STC8H
+            CODE    0F32H     003FH     UNIT         ?PR?LOADPATCH?TEF6686
+            CODE    0F71H     0039H     UNIT         ?PR?RADIOCTRL_FREQUP?RADIO_CTRL
+            CODE    0FAAH     0039H     UNIT         ?PR?RADIOCTRL_FREQDOWN?RADIO_CTRL
+            CODE    0FE3H     0035H     UNIT         ?PR?POLLKEYS?MAIN_ENUM_EXAMPLE
+            CODE    1018H     002CH     UNIT         ?PR?_RADIOCTRL_SETBAND?RADIO_CTRL
+            CODE    1044H     002BH     UNIT         ?PR?RADIOCTRL_INIT?RADIO_CTRL
+            CODE    106FH     0029H     UNIT         ?PR?_I2C_SENDBYTE?I2C_STC8H
+            CODE    1098H     0027H     UNIT         ?PR?PUTCHAR?PUTCHAR
+            CODE    10BFH     0026H     UNIT         ?PR?TEF6686_GETOFFSET?TEF6686
+            CODE    10E5H     0021H     UNIT         ?PR?I2C_RECVBYTE?I2C_STC8H
+            CODE    1106H     0020H     UNIT         ?PR?TEF6686_POWEROFF?TEF6686
+            CODE    1126H     001FH     UNIT         ?PR?TEF6686_SEEKSTATUS?TEF6686
+            CODE    1145H     001DH     UNIT         ?PR?_KEY_REGISTERCALLBACK?KEY
+            CODE    1162H     001CH     UNIT         ?PR?_KEY_VOLUMEUP_CALLBACK?KEY_CONFIG
+            CODE    117EH     001CH     UNIT         ?PR?_KEY_VOLUMEDOWN_CALLBACK?KEY_CONFIG
+            CODE    119AH     001AH     UNIT         ?PR?_KEY_GETEVENT?KEY
+            CODE    11B4H     001AH     UNIT         ?PR?_KEY_ISPRESSED?KEY
+            CODE    11CEH     0019H     UNIT         ?PR?_TEF6686_SETVOLUME?TEF6686
+            CODE    11E7H     0018H     UNIT         ?C_INITSEG
+            CODE    11FFH     0017H     UNIT         ?PR?_KEY_SETPINSTATE?KEY
+            CODE    1216H     0017H     UNIT         ?PR?_KEY_CLEAREVENT?KEY
+            CODE    122DH     0016H     UNIT         ?PR?_I2C_SENDACK?I2C_STC8H
+            CODE    1243H     0016H     UNIT         ?PR?_TEF6686_MUTE?TEF6686
+            CODE    1259H     0015H     UNIT         ?PR?TEF6686_GETLEVEL?TEF6686
+            CODE    126EH     0015H     UNIT         ?PR?TEF6686_GETUSN?TEF6686
+            CODE    1283H     0015H     UNIT         ?PR?TEF6686_GETWAM?TEF6686
+            CODE    1298H     0014H     UNIT         ?PR?I2C_START?I2C_STC8H
+            CODE    12ACH     0014H     UNIT         ?PR?I2C_RECVACK?I2C_STC8H
+            CODE    12C0H     0014H     UNIT         ?PR?_KEY_BANDSWITCH_CALLBACK?KEY_CONFIG
+            CODE    12D4H     0013H     UNIT         ?PR?TIMER0_INIT?MAIN_ENUM_EXAMPLE
+            CODE    12E7H     0011H     UNIT         ?PR?_KEY_MUTE_CALLBACK?KEY_CONFIG
+            CODE    12F8H     0010H     UNIT         ?PR?I2C_DELAY?I2C_STC8H
+            CODE    1308H     0010H     UNIT         ?PR?_WRITETUNERREGISTER?TEF6686
+BL51 BANKED LINKER/LOCATER V5.00                                                      10/21/2026  11:43:22  PAGE 3
+
+
+            CODE    1318H     000DH     UNIT         ?PR?_KEY_FREQUP_CALLBACK?KEY_CONFIG
+            CODE    1325H     000DH     UNIT         ?PR?_KEY_FREQDOWN_CALLBACK?KEY_CONFIG
+            CODE    1332H     000CH     UNIT         ?PR?I2C_STOP?I2C_STC8H
+            CODE    133EH     000AH     UNIT         ?PR?TEF6686_INIT?TEF6686
+            CODE    1348H     000AH     UNIT         ?PR?RADIOCTRL_MUTEON?RADIO_CTRL
+            CODE    1352H     0009H     UNIT         ?PR?TEF6686_GETFREQUENCY?TEF6686
+            CODE    135BH     0009H     UNIT         ?PR?RADIOCTRL_GETFREQ?RADIO_CTRL
+            CODE    1364H     0009H     UNIT         ?PR?RADIOCTRL_MUTEOFF?RADIO_CTRL
+            CODE    136DH     0009H     UNIT         ?PR?RADIOCTRL_GETLEVEL?RADIO_CTRL
+            CODE    1376H     0008H     UNIT         ?PR?_KEY_SEEKDOWN_CALLBACK?KEY_CONFIG
+            CODE    137EH     0006H     UNIT         ?PR?RADIOCTRL_GETBAND?RADIO_CTRL
+            CODE    1384H     0005H     UNIT         ?PR?I2C_INIT?I2C_STC8H
+            CODE    1389H     0005H     UNIT         ?PR?RADIOCTRL_SEEKUP?RADIO_CTRL
+            CODE    138EH     0005H     UNIT         ?PR?RADIOCTRL_SEEKDOWN?RADIO_CTRL
+            CODE    1393H     0003H     UNIT         ?PR?_RADIOCTRL_SETVOLUME?RADIO_CTRL
+
+
+
+OVERLAY MAP OF MODULE:   RADIO.ABS (I2C_STC8H)
+
+
+SEGMENT                                            BIT_GROUP          DATA_GROUP          XDATA_GROUP
+  +--> CALLED SEGMENT                           START    LENGTH     START    LENGTH     START    LENGTH
+-------------------------------------------------------------------------------------------------------
+?PR?TIMER0_ISR?MAIN_ENUM_EXAMPLE                -----    -----      -----    -----      -----    -----
+  +--> ?PR?KEY_CONFIG_SCAN?KEY_CONFIG
+
+?PR?KEY_CONFIG_SCAN?KEY_CONFIG                  -----    -----      -----    -----      -----    -----
+  +--> ?PR?_KEY_SETPINSTATE?KEY
+  +--> ?PR?KEY_SCAN?KEY
+
+?PR?KEY_SCAN?KEY                                -----    -----      -----    -----      0190H    0004H
+
+*** NEW ROOT ***************************************************
+
+?C_C51STARTUP                                   -----    -----      -----    -----      -----    -----
+  +--> ?PR?MAIN?MAIN_ENUM_EXAMPLE
+  +--> ?C_INITSEG
+
+?PR?MAIN?MAIN_ENUM_EXAMPLE                      -----    -----      -----    -----      0194H    0003H
+  +--> ?PR?TIMER0_INIT?MAIN_ENUM_EXAMPLE
+  +--> ?PR?KEY_CONFIG_INIT?KEY_CONFIG
+  +--> ?PR?RADIOCTRL_INIT?RADIO_CTRL
+  +--> ?PR?POLLKEYS?MAIN_ENUM_EXAMPLE
+  +--> ?PR?RADIOCTRL_GETLEVEL?RADIO_CTRL
+  +--> ?PR?RADIOCTRL_GETFREQ?RADIO_CTRL
+  +--> ?CO?MAIN_ENUM_EXAMPLE
+  +--> ?PR?PRINTF?PRINTF
+
+?PR?KEY_CONFIG_INIT?KEY_CONFIG                  -----    -----      -----    -----      -----    -----
+  +--> ?PR?KEY_INIT?KEY
+  +--> ?PR?_KEY_FREQUP_CALLBACK?KEY_CONFIG
+  +--> ?PR?_KEY_REGISTERCALLBACK?KEY
+  +--> ?PR?_KEY_FREQDOWN_CALLBACK?KEY_CONFIG
+  +--> ?PR?_KEY_SEEKUP_CALLBACK?KEY_CONFIG
+  +--> ?PR?_KEY_SEEKDOWN_CALLBACK?KEY_CONFIG
+  +--> ?PR?_KEY_MUTE_CALLBACK?KEY_CONFIG
+BL51 BANKED LINKER/LOCATER V5.00                                                      10/21/2026  11:43:22  PAGE 4
+
+
+  +--> ?PR?_KEY_BANDSWITCH_CALLBACK?KEY_CONFIG
+  +--> ?PR?_KEY_VOLUMEUP_CALLBACK?KEY_CONFIG
+  +--> ?PR?_KEY_VOLUMEDOWN_CALLBACK?KEY_CONFIG
+
+?PR?_KEY_FREQUP_CALLBACK?KEY_CONFIG             -----    -----      -----    -----      -----    -----
+  +--> ?PR?RADIOCTRL_FREQUP?RADIO_CTRL
+
+?PR?RADIOCTRL_FREQUP?RADIO_CTRL                 -----    -----      -----    -----      -----    -----
+  +--> ?PR?_RADIOCTRL_SETFREQ?RADIO_CTRL
+
+?PR?_RADIOCTRL_SETFREQ?RADIO_CTRL               -----    -----      -----    -----      -----    -----
+  +--> ?PR?_TEF6686_TUNETOFREQ?TEF6686
+
+?PR?_TEF6686_TUNETOFREQ?TEF6686                 -----    -----      -----    -----      019CH    0002H
+  +--> ?PR?_WRITETUNERREGISTER?TEF6686
+
+?PR?_WRITETUNERREGISTER?TEF6686                 -----    -----      -----    -----      -----    -----
+  +--> ?PR?_I2C_WRITE?I2C_STC8H
+
+?PR?_I2C_WRITE?I2C_STC8H                        -----    -----      -----    -----      019EH    0002H
+  +--> ?PR?I2C_START?I2C_STC8H
+  +--> ?PR?_I2C_SENDBYTE?I2C_STC8H
+  +--> ?PR?I2C_RECVACK?I2C_STC8H
+  +--> ?PR?I2C_STOP?I2C_STC8H
+
+?PR?I2C_START?I2C_STC8H                         -----    -----      -----    -----      -----    -----
+  +--> ?PR?I2C_DELAY?I2C_STC8H
+
+?PR?_I2C_SENDBYTE?I2C_STC8H                     -----    -----      -----    -----      -----    -----
+  +--> ?PR?I2C_DELAY?I2C_STC8H
+
+?PR?I2C_RECVACK?I2C_STC8H                       -----    -----      -----    -----      -----    -----
+  +--> ?PR?_I2C_SENDBYTE?I2C_STC8H
+  +--> ?PR?I2C_DELAY?I2C_STC8H
+
+?PR?I2C_STOP?I2C_STC8H                          -----    -----      -----    -----      -----    -----
+  +--> ?PR?I2C_DELAY?I2C_STC8H
+
+?PR?_KEY_FREQDOWN_CALLBACK?KEY_CONFIG           -----    -----      -----    -----      -----    -----
+  +--> ?PR?RADIOCTRL_FREQDOWN?RADIO_CTRL
+
+?PR?RADIOCTRL_FREQDOWN?RADIO_CTRL               -----    -----      -----    -----      -----    -----
+  +--> ?PR?_RADIOCTRL_SETFREQ?RADIO_CTRL
+
+?PR?_KEY_SEEKUP_CALLBACK?KEY_CONFIG             -----    -----      -----    -----      -----    -----
+  +--> ?PR?RADIOCTRL_SEEKUP?RADIO_CTRL
+
+?PR?RADIOCTRL_SEEKUP?RADIO_CTRL                 -----    -----      -----    -----      -----    -----
+  +--> ?PR?_TEF6686_SEEKSTART?TEF6686
+
+?PR?_TEF6686_SEEKSTART?TEF6686                  -----    -----      -----    -----      0197H    0001H
+  +--> ?PR?_WRITETUNERREGISTER?TEF6686
+
+?PR?_KEY_SEEKDOWN_CALLBACK?KEY_CONFIG           -----    -----      -----    -----      -----    -----
+  +--> ?PR?RADIOCTRL_SEEKDOWN?RADIO_CTRL
+
+?PR?RADIOCTRL_SEEKDOWN?RADIO_CTRL               -----    -----      -----    -----      -----    -----
+BL51 BANKED LINKER/LOCATER V5.00                                                      10/21/2026  11:43:22  PAGE 5
+
+
+  +--> ?PR?_TEF6686_SEEKSTART?TEF6686
+
+?PR?_KEY_MUTE_CALLBACK?KEY_CONFIG               -----    -----      -----    -----      -----    -----
+  +--> ?PR?RADIOCTRL_MUTEOFF?RADIO_CTRL
+  +--> ?PR?RADIOCTRL_MUTEON?RADIO_CTRL
+
+?PR?RADIOCTRL_MUTEOFF?RADIO_CTRL                -----    -----      -----    -----      -----    -----
+  +--> ?PR?_TEF6686_MUTE?TEF6686
+
+?PR?_TEF6686_MUTE?TEF6686                       -----    -----      -----    -----      019AH    0001H
+  +--> ?PR?_TEF6686_SETVOLUME?TEF6686
+
+?PR?_TEF6686_SETVOLUME?TEF6686                  -----    -----      -----    -----      -----    -----
+  +--> ?PR?_WRITETUNERREGISTER?TEF6686
+
+?PR?RADIOCTRL_MUTEON?RADIO_CTRL                 -----    -----      -----    -----      -----    -----
+  +--> ?PR?_TEF6686_MUTE?TEF6686
+
+?PR?_KEY_BANDSWITCH_CALLBACK?KEY_CONFIG         -----    -----      -----    -----      -----    -----
+  +--> ?PR?RADIOCTRL_GETBAND?RADIO_CTRL
+  +--> ?PR?_RADIOCTRL_SETBAND?RADIO_CTRL
+
+?PR?_RADIOCTRL_SETBAND?RADIO_CTRL               -----    -----      -----    -----      019AH    0002H
+  +--> ?PR?_RADIOCTRL_SETFREQ?RADIO_CTRL
+
+?PR?_KEY_VOLUMEUP_CALLBACK?KEY_CONFIG           -----    -----      -----    -----      -----    -----
+  +--> ?PR?_RADIOCTRL_SETVOLUME?RADIO_CTRL
+
+?PR?_RADIOCTRL_SETVOLUME?RADIO_CTRL             -----    -----      -----    -----      -----    -----
+  +--> ?PR?_TEF6686_SETVOLUME?TEF6686
+
+?PR?_KEY_VOLUMEDOWN_CALLBACK?KEY_CONFIG         -----    -----      -----    -----      -----    -----
+  +--> ?PR?_RADIOCTRL_SETVOLUME?RADIO_CTRL
+
+?PR?RADIOCTRL_INIT?RADIO_CTRL                   -----    -----      -----    -----      -----    -----
+  +--> ?PR?TEF6686_INIT?TEF6686
+
+?PR?TEF6686_INIT?TEF6686                        -----    -----      -----    -----      -----    -----
+  +--> ?PR?TEF6686_POWERON?TEF6686
+  +--> ?PR?_TEF6686_TUNETOFREQ?TEF6686
+
+?PR?TEF6686_POWERON?TEF6686                     -----    -----      -----    -----      -----    -----
+  +--> ?PR?I2C_INIT?I2C_STC8H
+  +--> ?PR?_I2C_WRITE?I2C_STC8H
+  +--> ?PR?LOADPATCH?TEF6686
+
+?PR?LOADPATCH?TEF6686                           -----    -----      -----    -----      -----    -----
+  +--> ?PR?_I2C_WRITE?I2C_STC8H
+
+?PR?POLLKEYS?MAIN_ENUM_EXAMPLE                  -----    -----      -----    -----      0197H    0002H
+  +--> ?PR?_KEY_GETEVENT?KEY
+  +--> ?PR?_HANDLEKEYEVENT?MAIN_ENUM_EXAMPLE
+  +--> ?PR?_KEY_CLEAREVENT?KEY
+
+?PR?_HANDLEKEYEVENT?MAIN_ENUM_EXAMPLE           -----    -----      -----    -----      0199H    0001H
+  +--> ?CO?MAIN_ENUM_EXAMPLE
+  +--> ?PR?PRINTF?PRINTF
+BL51 BANKED LINKER/LOCATER V5.00                                                      10/21/2026  11:43:22  PAGE 6
+
+
+  +--> ?PR?RADIOCTRL_FREQUP?RADIO_CTRL
+  +--> ?PR?RADIOCTRL_FREQDOWN?RADIO_CTRL
+  +--> ?PR?RADIOCTRL_MUTEOFF?RADIO_CTRL
+  +--> ?PR?RADIOCTRL_MUTEON?RADIO_CTRL
+  +--> ?PR?RADIOCTRL_GETBAND?RADIO_CTRL
+  +--> ?PR?_RADIOCTRL_SETBAND?RADIO_CTRL
+
+?PR?PRINTF?PRINTF                               0020H.0  0001H.1    0008H    0005H      019AH    0028H
+  +--> ?PR?PUTCHAR?PUTCHAR
+
+?PR?RADIOCTRL_GETLEVEL?RADIO_CTRL               -----    -----      -----    -----      -----    -----
+  +--> ?PR?TEF6686_GETLEVEL?TEF6686
+
+?PR?TEF6686_GETLEVEL?TEF6686                    -----    -----      -----    -----      -----    -----
+  +--> ?PR?_READTUNERREGISTER?TEF6686
+
+?PR?_READTUNERREGISTER?TEF6686                  -----    -----      -----    -----      0197H    0001H
+  +--> ?PR?_I2C_WRITE?I2C_STC8H
+  +--> ?PR?_I2C_READ?I2C_STC8H
+
+?PR?_I2C_READ?I2C_STC8H                         -----    -----      -----    -----      0198H    0002H
+  +--> ?PR?I2C_START?I2C_STC8H
+  +--> ?PR?I2C_RECVACK?I2C_STC8H
+  +--> ?PR?I2C_RECVBYTE?I2C_STC8H
+  +--> ?PR?_I2C_SENDACK?I2C_STC8H
+  +--> ?PR?I2C_STOP?I2C_STC8H
+
+?PR?I2C_RECVBYTE?I2C_STC8H                      -----    -----      -----    -----      -----    -----
+  +--> ?PR?I2C_DELAY?I2C_STC8H
+
+?PR?_I2C_SENDACK?I2C_STC8H                      -----    -----      -----    -----      -----    -----
+  +--> ?PR?I2C_DELAY?I2C_STC8H
+
+
+
+SYMBOL TABLE OF MODULE:  RADIO.ABS (I2C_STC8H)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        ?C?CLDPTR
+  C:0678H         PUBLIC        ?C?CLDPTR
+  -------         ENDMOD        ?C?CLDPTR
+
+  -------         MODULE        ?C?CLDOPTR
+  C:0691H         PUBLIC        ?C?CLDOPTR
+  -------         ENDMOD        ?C?CLDOPTR
+
+  -------         MODULE        ?C?CSTOPTR
+  C:06BEH         PUBLIC        ?C?CSTOPTR
+  -------         ENDMOD        ?C?CSTOPTR
+
+  -------         MODULE        ?C?UIDIV
+  C:06E0H         PUBLIC        ?C?UIDIV
+  -------         ENDMOD        ?C?UIDIV
+
+  -------         MODULE        ?C?ILDOPTR
+BL51 BANKED LINKER/LOCATER V5.00                                                      10/21/2026  11:43:22  PAGE 7
+
+
+  C:0735H         PUBLIC        ?C?ILDOPTR
+  -------         ENDMOD        ?C?ILDOPTR
+
+  -------         MODULE        ?C?IILDOPTR
+  C:076DH         PUBLIC        ?C?IILDOPTR
+  -------         ENDMOD        ?C?IILDOPTR
+
+  -------         MODULE        ?C?ISTOPTR
+  C:07BAH         PUBLIC        ?C?ISTOPTR
+  -------         ENDMOD        ?C?ISTOPTR
+
+  -------         MODULE        ?C?PLDOPTR
+  C:07E7H         PUBLIC        ?C?PLDOPTR
+  -------         ENDMOD        ?C?PLDOPTR
+
+  -------         MODULE        PRINTF
+  X:019AH         PUBLIC        ?_PRINTF517?BYTE
+  X:019AH         PUBLIC        ?_PRINTF?BYTE
+  X:019AH         PUBLIC        ?_SPRINTF517?BYTE
+  X:019AH         PUBLIC        ?_SPRINTF?BYTE
+  C:0079H         PUBLIC        _PRINTF
+  C:0079H         PUBLIC        _PRINTF517
+  C:0073H         PUBLIC        _SPRINTF
+  C:0073H         PUBLIC        _SPRINTF517
+  -------         ENDMOD        PRINTF
+
+  -------         MODULE        ?C?CSTPTR
+  C:0817H         PUBLIC        ?C?CSTPTR
+  -------         ENDMOD        ?C?CSTPTR
+
+  -------         MODULE        ?C?IILDX
+  C:0829H         PUBLIC        ?C?IILDX
+  -------         ENDMOD        ?C?IILDX
+
+  -------         MODULE        ?C?PLDIDATA
+  C:083FH         PUBLIC        ?C?PLDIDATA
+  -------         ENDMOD        ?C?PLDIDATA
+
+  -------         MODULE        ?C?PLDXDATA
+  C:0848H         PUBLIC        ?C?PLDXDATA
+  -------         ENDMOD        ?C?PLDXDATA
+
+  -------         MODULE        ?C?PLDIXDATA
+  C:0851H         PUBLIC        ?C?PLDIXDATA
+  -------         ENDMOD        ?C?PLDIXDATA
+
+  -------         MODULE        ?C?PSTXDATA
+  C:0868H         PUBLIC        ?C?PSTXDATA
+  -------         ENDMOD        ?C?PSTXDATA
+
+  -------         MODULE        ?C?PLDPDATA
+  C:0871H         PUBLIC        ?C?PLDPDATA
+  -------         ENDMOD        ?C?PLDPDATA
+
+  -------         MODULE        ?C?PLDCODE
+  C:087AH         PUBLIC        ?C?PLDCODE
+  -------         ENDMOD        ?C?PLDCODE
+BL51 BANKED LINKER/LOCATER V5.00                                                      10/21/2026  11:43:22  PAGE 8
+
+
+
+  -------         MODULE        ?C?CCASE
+  C:0886H         PUBLIC        ?C?CCASE
+  -------         ENDMOD        ?C?CCASE
+
+  -------         MODULE        PUTCHAR
+  C:1098H         PUBLIC        _PUTCHAR
+  -------         ENDMOD        PUTCHAR
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?TEF6686_POWEROFF?TEF6686
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?TEF6686_GETFREQUENCY?TEF6686
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?TEF6686_GETUSN?TEF6686
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?TEF6686_GETWAM?TEF6686
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?TEF6686_GETOFFSET?TEF6686
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?TEF6686_SEEKSTATUS?TEF6686
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_KEY_ISPRESSED?KEY
+
+Program Size: data=15.1 xdata=483 code=5014
+LINK/LOCATE RUN COMPLETE.  7 WARNING(S),  0 ERROR(S)

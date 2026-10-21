@@ -1,0 +1,173 @@
+C51 COMPILER V7.00  KEY_CONFIG                                                             10/21/2026 11:43:22 PAGE 1   
+
+
+C51 COMPILER V7.00, COMPILATION OF MODULE KEY_CONFIG
+OBJECT MODULE PLACED IN output\key_config.obj
+COMPILER INVOKED BY: E:\keil\C51\BIN\c51.exe source\key_config.c LARGE OBJECT(output\key_config.obj)
+
+stmt level    source
+
+   1          #include "key_config.h"
+   2          #include "tef6686.h"
+   3          
+   4          static uint8 current_volume = 70;
+   5          
+   6          void Key_FreqUp_Callback(uint8 key_num, KeyEvent_e event)
+   7          {
+   8   1          key_num = key_num;
+   9   1          switch (event) {
+  10   2              case KEY_EVENT_SHORT:
+  11   2              case KEY_EVENT_HOLD:
+  12   2                  RadioCtrl_FreqUp();
+  13   2                  break;
+  14   2              default:
+  15   2                  break;
+  16   2          }
+  17   1      }
+  18          
+  19          void Key_FreqDown_Callback(uint8 key_num, KeyEvent_e event)
+  20          {
+  21   1          key_num = key_num;
+  22   1          switch (event) {
+  23   2              case KEY_EVENT_SHORT:
+  24   2              case KEY_EVENT_HOLD:
+  25   2                  RadioCtrl_FreqDown();
+  26   2                  break;
+  27   2              default:
+  28   2                  break;
+  29   2          }
+  30   1      }
+  31          
+  32          void Key_SeekUp_Callback(uint8 key_num, KeyEvent_e event)
+  33          {
+  34   1          key_num = key_num;
+  35   1          switch (event) {
+  36   2              case KEY_EVENT_SHORT:
+  37   2                  RadioCtrl_SeekUp();
+  38   2                  break;
+  39   2              default:
+  40   2                  break;
+  41   2          }
+  42   1      }
+  43          
+  44          void Key_SeekDown_Callback(uint8 key_num, KeyEvent_e event)
+  45          {
+  46   1          key_num = key_num;
+  47   1          switch (event) {
+  48   2              case KEY_EVENT_SHORT:
+  49   2                  RadioCtrl_SeekDown();
+  50   2                  break;
+  51   2              default:
+  52   2                  break;
+  53   2          }
+  54   1      }
+  55          
+C51 COMPILER V7.00  KEY_CONFIG                                                             10/21/2026 11:43:22 PAGE 2   
+
+  56          void Key_Mute_Callback(uint8 key_num, KeyEvent_e event)
+  57          {
+  58   1          key_num = key_num;
+  59   1          switch (event) {
+  60   2              case KEY_EVENT_SHORT:
+  61   2                  if (RadioParam.mute_status) {
+  62   3                      RadioCtrl_MuteOff();
+  63   3                  } else {
+  64   3                      RadioCtrl_MuteOn();
+  65   3                  }
+  66   2                  break;
+  67   2              default:
+  68   2                  break;
+  69   2          }
+  70   1      }
+  71          
+  72          void Key_BandSwitch_Callback(uint8 key_num, KeyEvent_e event)
+  73          {
+  74   1          key_num = key_num;
+  75   1          switch (event) {
+  76   2              case KEY_EVENT_SHORT:
+  77   2                  if (RadioCtrl_GetBand() == BAND_FM) {
+  78   3                      RadioCtrl_SetBand(BAND_AM);
+  79   3                  } else {
+  80   3                      RadioCtrl_SetBand(BAND_FM);
+  81   3                  }
+  82   2                  break;
+  83   2              default:
+  84   2                  break;
+  85   2          }
+  86   1      }
+  87          
+  88          void Key_VolumeUp_Callback(uint8 key_num, KeyEvent_e event)
+  89          {
+  90   1          key_num = key_num;
+  91   1          switch (event) {
+  92   2              case KEY_EVENT_SHORT:
+  93   2              case KEY_EVENT_HOLD:
+  94   2                  if (current_volume < 250) {
+  95   3                      current_volume += 5;
+  96   3                      RadioCtrl_SetVolume(current_volume);
+  97   3                  }
+  98   2                  break;
+  99   2              default:
+ 100   2                  break;
+ 101   2          }
+ 102   1      }
+ 103          
+ 104          void Key_VolumeDown_Callback(uint8 key_num, KeyEvent_e event)
+ 105          {
+ 106   1          key_num = key_num;
+ 107   1          switch (event) {
+ 108   2              case KEY_EVENT_SHORT:
+ 109   2              case KEY_EVENT_HOLD:
+ 110   2                  if (current_volume > 5) {
+ 111   3                      current_volume -= 5;
+ 112   3                      RadioCtrl_SetVolume(current_volume);
+ 113   3                  }
+ 114   2                  break;
+ 115   2              default:
+ 116   2                  break;
+ 117   2          }
+C51 COMPILER V7.00  KEY_CONFIG                                                             10/21/2026 11:43:22 PAGE 3   
+
+ 118   1      }
+ 119          
+ 120          void Key_Config_Init(void)
+ 121          {
+ 122   1          Key_Init();
+ 123   1      
+ 124   1          Key_RegisterCallback(KEY_FREQ_UP,     Key_FreqUp_Callback);
+ 125   1          Key_RegisterCallback(KEY_FREQ_DOWN,   Key_FreqDown_Callback);
+ 126   1          Key_RegisterCallback(KEY_SEEK_UP,     Key_SeekUp_Callback);
+ 127   1          Key_RegisterCallback(KEY_SEEK_DOWN,   Key_SeekDown_Callback);
+ 128   1          Key_RegisterCallback(KEY_MUTE,        Key_Mute_Callback);
+ 129   1          Key_RegisterCallback(KEY_BAND_SWITCH, Key_BandSwitch_Callback);
+ 130   1          Key_RegisterCallback(KEY_VOLUME_UP,   Key_VolumeUp_Callback);
+ 131   1          Key_RegisterCallback(KEY_VOLUME_DOWN, Key_VolumeDown_Callback);
+ 132   1      }
+ 133          
+ 134          void Key_Config_Scan(void)
+ 135          {
+ 136   1          Key_SetPinState(KEY_FREQ_UP,     P3_0);
+ 137   1          Key_SetPinState(KEY_FREQ_DOWN,   P3_1);
+ 138   1          Key_SetPinState(KEY_SEEK_UP,     P3_2);
+ 139   1          Key_SetPinState(KEY_SEEK_DOWN,   P3_3);
+ 140   1          Key_SetPinState(KEY_MUTE,        P3_4);
+ 141   1          Key_SetPinState(KEY_BAND_SWITCH, P3_5);
+ 142   1          Key_SetPinState(KEY_VOLUME_UP,   P3_6);
+ 143   1          Key_SetPinState(KEY_VOLUME_DOWN, P3_7);
+ 144   1      
+ 145   1          Key_Scan();
+ 146   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    309    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =      1    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

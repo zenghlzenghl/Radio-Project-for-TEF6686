@@ -1,0 +1,170 @@
+C51 COMPILER V7.00  KEY                                                                    10/21/2026 11:43:22 PAGE 1   
+
+
+C51 COMPILER V7.00, COMPILATION OF MODULE KEY
+OBJECT MODULE PLACED IN output\key.obj
+COMPILER INVOKED BY: E:\keil\C51\BIN\c51.exe source\key.c LARGE OBJECT(output\key.obj)
+
+stmt level    source
+
+   1          #include "key.h"
+   2          
+   3          static key_t key_list[KEY_NUM];
+   4          
+   5          void Key_Init(void)
+   6          {
+   7   1          uint8 i;
+   8   1          
+   9   1          for (i = 0; i < KEY_NUM; i++) {
+  10   2              key_list[i].pin_state = 1;
+  11   2              key_list[i].last_state = 1;
+  12   2              key_list[i].stable_state = 1;
+  13   2              key_list[i].event = KEY_EVENT_NONE;
+  14   2              
+  15   2              key_list[i].debounce_cnt = 0;
+  16   2              key_list[i].press_time = 0;
+  17   2              key_list[i].hold_cnt = 0;
+  18   2              key_list[i].repeat_cnt = 0;
+  19   2              
+  20   2              key_list[i].pressed_flag = 0;
+  21   2              key_list[i].long_pressed_flag = 0;
+  22   2              key_list[i].hold_event_flag = 0;
+  23   2              
+  24   2              key_list[i].callback = 0;
+  25   2          }
+  26   1      }
+  27          
+  28          void Key_RegisterCallback(uint8 key_num, key_callback_t callback)
+  29          {
+  30   1          if (key_num < KEY_NUM) {
+  31   2              key_list[key_num].callback = callback;
+  32   2          }
+  33   1      }
+  34          
+  35          void Key_SetPinState(uint8 key_num, uint8 state)
+  36          {
+  37   1          if (key_num < KEY_NUM) {
+  38   2              key_list[key_num].pin_state = state;
+  39   2          }
+  40   1      }
+  41          
+  42          KeyEvent_e Key_GetEvent(uint8 key_num)
+  43          {
+  44   1          if (key_num < KEY_NUM) {
+  45   2              return key_list[key_num].event;
+  46   2          }
+  47   1          return KEY_EVENT_NONE;
+  48   1      }
+  49          
+  50          uint8 Key_IsPressed(uint8 key_num)
+  51          {
+  52   1          if (key_num < KEY_NUM) {
+  53   2              return key_list[key_num].pressed_flag;
+  54   2          }
+  55   1          return 0;
+C51 COMPILER V7.00  KEY                                                                    10/21/2026 11:43:22 PAGE 2   
+
+  56   1      }
+  57          
+  58          void Key_ClearEvent(uint8 key_num)
+  59          {
+  60   1          if (key_num < KEY_NUM) {
+  61   2              key_list[key_num].event = KEY_EVENT_NONE;
+  62   2          }
+  63   1      }
+  64          
+  65          void Key_Scan(void)
+  66          {
+  67   1          uint8 i;
+  68   1          
+  69   1          for (i = 0; i < KEY_NUM; i++) {
+  70   2              key_t *k = &key_list[i];
+  71   2              
+  72   2              k->event = KEY_EVENT_NONE;
+  73   2              
+  74   2              if (k->pin_state != k->last_state) {
+  75   3                  k->debounce_cnt = 0;
+  76   3                  k->last_state = k->pin_state;
+  77   3              } else {
+  78   3                  if (k->debounce_cnt < KEY_DEBOUNCE_TIME) {
+  79   4                      k->debounce_cnt++;
+  80   4                  } else {
+  81   4                      if (k->pin_state != k->stable_state) {
+  82   5                          k->stable_state = k->pin_state;
+  83   5                          
+  84   5                          if (k->stable_state == 0) {
+  85   6                              k->pressed_flag = 1;
+  86   6                              k->long_pressed_flag = 0;
+  87   6                              k->hold_event_flag = 0;
+  88   6                              k->press_time = 0;
+  89   6                              k->hold_cnt = 0;
+  90   6                              k->repeat_cnt = 0;
+  91   6                          } else {
+  92   6                              if (k->pressed_flag && !k->long_pressed_flag) {
+  93   7                                  k->event = KEY_EVENT_SHORT;
+  94   7                                  if (k->callback) {
+  95   8                                      k->callback(i, KEY_EVENT_SHORT);
+  96   8                                  }
+  97   7                              } else {
+  98   7                                  k->event = KEY_EVENT_RELEASE;
+  99   7                                  if (k->callback) {
+ 100   8                                      k->callback(i, KEY_EVENT_RELEASE);
+ 101   8                                  }
+ 102   7                              }
+ 103   6                              k->pressed_flag = 0;
+ 104   6                          }
+ 105   5                      }
+ 106   4                  }
+ 107   3              }
+ 108   2              
+ 109   2              if (k->stable_state == 0 && k->pressed_flag) {
+ 110   3                  k->press_time++;
+ 111   3                  
+ 112   3                  if (!k->long_pressed_flag && k->press_time >= KEY_LONG_TIME) {
+ 113   4                      k->long_pressed_flag = 1;
+ 114   4                      k->event = KEY_EVENT_LONG;
+ 115   4                      if (k->callback) {
+ 116   5                          k->callback(i, KEY_EVENT_LONG);
+ 117   5                      }
+C51 COMPILER V7.00  KEY                                                                    10/21/2026 11:43:22 PAGE 3   
+
+ 118   4                  }
+ 119   3                  
+ 120   3                  if (k->long_pressed_flag) {
+ 121   4                      k->hold_cnt++;
+ 122   4                      
+ 123   4                      if (k->hold_cnt >= KEY_HOLD_TIME) {
+ 124   5                          k->hold_cnt = 0;
+ 125   5                          k->hold_event_flag = 1;
+ 126   5                          k->event = KEY_EVENT_HOLD;
+ 127   5                          if (k->callback) {
+ 128   6                              k->callback(i, KEY_EVENT_HOLD);
+ 129   6                          }
+ 130   5                      }
+ 131   4                      
+ 132   4                      k->repeat_cnt++;
+ 133   4                      if (k->repeat_cnt >= KEY_REPEAT_TIME) {
+ 134   5                          k->repeat_cnt = 0;
+ 135   5                          k->event = KEY_EVENT_SHORT;
+ 136   5                          if (k->callback) {
+ 137   6                              k->callback(i, KEY_EVENT_SHORT);
+ 138   6                          }
+ 139   5                      }
+ 140   4                  }
+ 141   3              }
+ 142   2          }
+ 143   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1119    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =    144       4
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

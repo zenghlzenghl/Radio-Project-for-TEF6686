@@ -1,0 +1,177 @@
+C51 COMPILER V7.00  I2C_STC8H                                                              10/21/2026 11:43:22 PAGE 1   
+
+
+C51 COMPILER V7.00, COMPILATION OF MODULE I2C_STC8H
+OBJECT MODULE PLACED IN output\i2c_stc8h.obj
+COMPILER INVOKED BY: E:\keil\C51\BIN\c51.exe source\i2c_stc8h.c LARGE OBJECT(output\i2c_stc8h.obj)
+
+stmt level    source
+
+   1          #include "i2c_stc8h.h"
+   2          
+   3          void I2C_Init(void)
+   4          {
+   5   1          I2C_SCL = 1;
+   6   1          I2C_SDA = 1;
+   7   1      }
+   8          
+   9          void I2C_Delay(void)
+  10          {
+  11   1          uint8 i;
+  12   1          for (i = 0; i < 10; i++) {
+  13   2              NOP4();
+  14   2          }
+  15   1      }
+  16          
+  17          void I2C_Start(void)
+  18          {
+  19   1          I2C_SDA = 1;
+  20   1          I2C_SCL = 1;
+  21   1          I2C_Delay();
+  22   1          I2C_SDA = 0;
+  23   1          I2C_Delay();
+  24   1          I2C_SCL = 0;
+  25   1          I2C_Delay();
+  26   1      }
+  27          
+  28          void I2C_Stop(void)
+  29          {
+  30   1          I2C_SDA = 0;
+  31   1          I2C_SCL = 1;
+  32   1          I2C_Delay();
+  33   1          I2C_SDA = 1;
+  34   1          I2C_Delay();
+  35   1      }
+  36          
+  37          void I2C_SendByte(uint8 dat)
+  38          {
+  39   1          uint8 i;
+  40   1          
+  41   1          for (i = 0; i < 8; i++) {
+  42   2              I2C_SDA = (dat & 0x80) ? 1 : 0;
+  43   2              dat <<= 1;
+  44   2              I2C_SCL = 1;
+  45   2              I2C_Delay();
+  46   2              I2C_SCL = 0;
+  47   2              I2C_Delay();
+  48   2          }
+  49   1          
+  50   1          I2C_SDA = 1;
+  51   1          I2C_SCL = 1;
+  52   1          I2C_Delay();
+  53   1          I2C_SCL = 0;
+  54   1          I2C_Delay();
+  55   1      }
+C51 COMPILER V7.00  I2C_STC8H                                                              10/21/2026 11:43:22 PAGE 2   
+
+  56          
+  57          uint8 I2C_RecvByte(void)
+  58          {
+  59   1          uint8 i, dat = 0;
+  60   1          
+  61   1          I2C_SDA = 1;
+  62   1          
+  63   1          for (i = 0; i < 8; i++) {
+  64   2              I2C_SCL = 1;
+  65   2              I2C_Delay();
+  66   2              dat <<= 1;
+  67   2              if (I2C_SDA) {
+  68   3                  dat |= 0x01;
+  69   3              }
+  70   2              I2C_SCL = 0;
+  71   2              I2C_Delay();
+  72   2          }
+  73   1          
+  74   1          return dat;
+  75   1      }
+  76          
+  77          void I2C_SendAck(uint8 ack)
+  78          {
+  79   1          if (ack) {
+  80   2              I2C_SDA = 0;
+  81   2          } else {
+  82   2              I2C_SDA = 1;
+  83   2          }
+  84   1          I2C_SCL = 1;
+  85   1          I2C_Delay();
+  86   1          I2C_SCL = 0;
+  87   1          I2C_Delay();
+  88   1          I2C_SDA = 1;
+  89   1      }
+  90          
+  91          uint8 I2C_RecvAck(void)
+  92          {
+  93   1          uint8 ack;
+  94   1          
+  95   1          I2C_SDA = 1;
+  96   1          I2C_SCL = 1;
+  97   1          I2C_Delay();
+  98   1          ack = I2C_SDA;
+  99   1          I2C_SCL = 0;
+ 100   1          I2C_Delay();
+ 101   1          
+ 102   1          return ack;
+ 103   1      }
+ 104          
+ 105          uint8 xdata I2C_Buf[256];
+ 106          
+ 107          void I2C_Write(uint8 device_addr, uint16 len)
+ 108          {
+ 109   1          uint16 i;
+ 110   1      
+ 111   1          I2C_Start();
+ 112   1          I2C_SendByte(device_addr);
+ 113   1          if (I2C_RecvAck()) {
+ 114   2              I2C_Stop();
+ 115   2              return;
+ 116   2          }
+ 117   1      
+C51 COMPILER V7.00  I2C_STC8H                                                              10/21/2026 11:43:22 PAGE 3   
+
+ 118   1          for (i = 0; i < len; i++) {
+ 119   2              I2C_SendByte(I2C_Buf[i]);
+ 120   2              if (I2C_RecvAck()) {
+ 121   3                  I2C_Stop();
+ 122   3                  return;
+ 123   3              }
+ 124   2          }
+ 125   1      
+ 126   1          I2C_Stop();
+ 127   1      }
+ 128          
+ 129          void I2C_Read(uint8 device_addr, uint16 len)
+ 130          {
+ 131   1          uint16 i;
+ 132   1      
+ 133   1          I2C_Start();
+ 134   1          I2C_SendByte(device_addr | 0x01);
+ 135   1          if (I2C_RecvAck()) {
+ 136   2              I2C_Stop();
+ 137   2              return;
+ 138   2          }
+ 139   1      
+ 140   1          for (i = 0; i < len; i++) {
+ 141   2              I2C_Buf[i] = I2C_RecvByte();
+ 142   2              if (i == len - 1) {
+ 143   3                  I2C_SendAck(1);
+ 144   3              } else {
+ 145   3                  I2C_SendAck(0);
+ 146   3              }
+ 147   2          }
+ 148   1          
+ 149   1          I2C_Stop();
+ 150   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    324    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =    256       4
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

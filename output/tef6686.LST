@@ -1,0 +1,301 @@
+C51 COMPILER V7.00  TEF6686                                                                10/21/2026 11:43:22 PAGE 1   
+
+
+C51 COMPILER V7.00, COMPILATION OF MODULE TEF6686
+OBJECT MODULE PLACED IN output\tef6686.obj
+COMPILER INVOKED BY: E:\keil\C51\BIN\c51.exe source\tef6686.c LARGE OBJECT(output\tef6686.obj)
+
+stmt level    source
+
+   1          #include "tef6686.h"
+   2          #include "i2c_stc8h.h"
+   3          
+   4          uint8 TunerReadBuff_Quality[MAX_READ_REG_QUAL_NUM];
+   5          extern uint8 xdata I2C_Buf[];
+   6          
+   7          static uint8 F_Radio_Init_Ok = 0;
+   8          static uint16 CurrentFreq = 8750;
+   9          
+  10          #define FM_VOLUME_GAIN     60
+  11          #define AM_VOLUME_GAIN     90
+  12          #define MUTE_VOLUME_GAIN   235
+  13          #define DEFAULT_VOLUME_GAIN 70
+  14          
+  15          static void WriteTunerRegister(uint8 nb)
+  16          {
+  17   1          if (F_Radio_Init_Ok) {
+  18   2              I2C_Write(TEF6686_I2C_ADDR, nb);
+  19   2          }
+  20   1      }
+  21          
+  22          static void ReadTunerRegister(uint8 module, uint8 Cmd, uint8 nb)
+  23          {
+  24   1          uint8 i;
+  25   1      
+  26   1          if (F_Radio_Init_Ok || (module == MODULE_APPL)) {
+  27   2              I2C_Buf[0] = module;
+  28   2              I2C_Buf[1] = Cmd;
+  29   2              I2C_Buf[2] = 1;
+  30   2      
+  31   2              I2C_Write(TEF6686_I2C_ADDR, 3);
+  32   2              I2C_Read(TEF6686_I2C_ADDR, nb);
+  33   2      
+  34   2              for (i = 0; i < nb; i++) {
+  35   3                  TunerReadBuff_Quality[i] = I2C_Buf[i];
+  36   3              }
+  37   2          }
+  38   1      }
+  39          
+  40          static void LoadPatch(void)
+  41          {
+  42   1          I2C_Buf[0] = 0x1c;
+  43   1          I2C_Buf[1] = 0x00;
+  44   1          I2C_Buf[2] = 0x00;
+  45   1          I2C_Write(TEF6686_I2C_ADDR, 3);
+  46   1      
+  47   1          I2C_Buf[0] = 0x1c;
+  48   1          I2C_Buf[1] = 0x00;
+  49   1          I2C_Buf[2] = 0x74;
+  50   1          I2C_Write(TEF6686_I2C_ADDR, 3);
+  51   1      
+  52   1          I2C_Buf[0] = 0x1c;
+  53   1          I2C_Buf[1] = 0x00;
+  54   1          I2C_Buf[2] = 0x75;
+  55   1          I2C_Write(TEF6686_I2C_ADDR, 3);
+C51 COMPILER V7.00  TEF6686                                                                10/21/2026 11:43:22 PAGE 2   
+
+  56   1      }
+  57          
+  58          void TEF6686_PowerOn(void)
+  59          {
+  60   1          I2C_Init();
+  61   1      
+  62   1          I2C_Buf[0] = 0x40;
+  63   1          I2C_Buf[1] = 0x04;
+  64   1          I2C_Buf[2] = 0x01;
+  65   1          I2C_Buf[3] = 0x00;
+  66   1          I2C_Buf[4] = 0x3d;
+  67   1          I2C_Buf[5] = 0x09;
+  68   1          I2C_Buf[6] = 0x00;
+  69   1          I2C_Buf[7] = 0x00;
+  70   1          I2C_Buf[8] = 0x00;
+  71   1          I2C_Write(TEF6686_I2C_ADDR, 9);
+  72   1      
+  73   1          I2C_Buf[0] = 0x14;
+  74   1          I2C_Buf[1] = 0x00;
+  75   1          I2C_Buf[2] = 0x01;
+  76   1          I2C_Write(TEF6686_I2C_ADDR, 3);
+  77   1      
+  78   1          I2C_Buf[0] = 0x40;
+  79   1          I2C_Buf[1] = 0x05;
+  80   1          I2C_Buf[2] = 0x01;
+  81   1          I2C_Buf[3] = 0x00;
+  82   1          I2C_Buf[4] = 0x01;
+  83   1          I2C_Write(TEF6686_I2C_ADDR, 5);
+  84   1      
+  85   1          LoadPatch();
+  86   1      
+  87   1          F_Radio_Init_Ok = 1;
+  88   1      }
+  89          
+  90          void TEF6686_PowerOff(void)
+  91          {
+  92   1          F_Radio_Init_Ok = 0;
+  93   1      
+  94   1          I2C_Buf[0] = 0x40;
+  95   1          I2C_Buf[1] = 0x05;
+  96   1          I2C_Buf[2] = 0x01;
+  97   1          I2C_Buf[3] = 0x00;
+  98   1          I2C_Buf[4] = 0x00;
+  99   1          I2C_Write(TEF6686_I2C_ADDR, 5);
+ 100   1      }
+ 101          
+ 102          void TEF6686_Init(void)
+ 103          {
+ 104   1          TEF6686_PowerOn();
+ 105   1          TEF6686_TuneToFreq(8750);
+ 106   1      }
+ 107          
+ 108          BOOL TEF6686_TuneToFreq(uint16 freq)
+ 109          {
+ 110   1          CurrentFreq = freq;
+ 111   1      
+ 112   1          if (!F_Radio_Init_Ok) {
+ 113   2              return FALSE;
+ 114   2          }
+ 115   1      
+ 116   1          if (freq > 2000) {
+ 117   2              I2C_Buf[0] = MODULE_FM;
+C51 COMPILER V7.00  TEF6686                                                                10/21/2026 11:43:22 PAGE 3   
+
+ 118   2              I2C_Buf[1] = CMD_FM_AM_TUNE_TO;
+ 119   2              I2C_Buf[2] = 0x01;
+ 120   2              I2C_Buf[3] = (freq >> 8) & 0xFF;
+ 121   2              I2C_Buf[4] = freq & 0xFF;
+ 122   2              I2C_Buf[5] = 0x00;
+ 123   2              I2C_Buf[6] = 0x00;
+ 124   2      
+ 125   2              WriteTunerRegister(7);
+ 126   2          } else {
+ 127   2              I2C_Buf[0] = MODULE_AM;
+ 128   2              I2C_Buf[1] = CMD_FM_AM_TUNE_TO;
+ 129   2              I2C_Buf[2] = 0x01;
+ 130   2              I2C_Buf[3] = (freq >> 8) & 0xFF;
+ 131   2              I2C_Buf[4] = freq & 0xFF;
+ 132   2              I2C_Buf[5] = 0x00;
+ 133   2              I2C_Buf[6] = 0x00;
+ 134   2      
+ 135   2              WriteTunerRegister(7);
+ 136   2          }
+ 137   1      
+ 138   1          return TRUE;
+ 139   1      }
+ 140          
+ 141          void TEF6686_SetVolume(uint8 volume)
+ 142          {
+ 143   1          I2C_Buf[0] = MODULE_AUDIO;
+ 144   1          I2C_Buf[1] = CMD_AUDIO_SET_VOLUME;
+ 145   1          I2C_Buf[2] = 0x01;
+ 146   1          I2C_Buf[3] = 0x00;
+ 147   1          I2C_Buf[4] = volume;
+ 148   1      
+ 149   1          WriteTunerRegister(5);
+ 150   1      }
+ 151          
+ 152          void TEF6686_Mute(uint8 mute)
+ 153          {
+ 154   1          uint8 volume;
+ 155   1      
+ 156   1          if (mute) {
+ 157   2              volume = MUTE_VOLUME_GAIN;
+ 158   2          } else {
+ 159   2              volume = DEFAULT_VOLUME_GAIN;
+ 160   2          }
+ 161   1      
+ 162   1          TEF6686_SetVolume(volume);
+ 163   1      }
+ 164          
+ 165          uint16 TEF6686_GetFrequency(void)
+ 166          {
+ 167   1          return CurrentFreq;
+ 168   1      }
+ 169          
+ 170          uint8 TEF6686_GetLevel(void)
+ 171          {
+ 172   1          uint16 level;
+ 173   1      
+ 174   1          ReadTunerRegister(MODULE_FM, CMD_FM_GET_QUALITY_DATA, MAX_READ_REG_QUAL_NUM);
+ 175   1      
+ 176   1          level = ((uint16)TunerReadBuff_Quality[READ_REG_LEVEL_H] << 8) |
+ 177   1                   TunerReadBuff_Quality[READ_REG_LEVEL_L];
+ 178   1      
+ 179   1          return (uint8)(level / 10);
+C51 COMPILER V7.00  TEF6686                                                                10/21/2026 11:43:22 PAGE 4   
+
+ 180   1      }
+ 181          
+ 182          uint8 TEF6686_GetUSN(void)
+ 183          {
+ 184   1          uint16 usn;
+ 185   1      
+ 186   1          ReadTunerRegister(MODULE_FM, CMD_FM_GET_QUALITY_DATA, MAX_READ_REG_QUAL_NUM);
+ 187   1      
+ 188   1          usn = ((uint16)TunerReadBuff_Quality[READ_REG_USN_H] << 8) |
+ 189   1                 TunerReadBuff_Quality[READ_REG_USN_L];
+ 190   1      
+ 191   1          return (uint8)(usn / 10);
+ 192   1      }
+ 193          
+ 194          uint8 TEF6686_GetWAM(void)
+ 195          {
+ 196   1          uint16 wam;
+ 197   1      
+ 198   1          ReadTunerRegister(MODULE_FM, CMD_FM_GET_QUALITY_DATA, MAX_READ_REG_QUAL_NUM);
+ 199   1      
+ 200   1          wam = ((uint16)TunerReadBuff_Quality[READ_REG_WAM_H] << 8) |
+ 201   1                 TunerReadBuff_Quality[READ_REG_WAM_L];
+ 202   1      
+ 203   1          return (uint8)(wam / 10);
+ 204   1      }
+ 205          
+ 206          int16 TEF6686_GetOffset(void)
+ 207          {
+ 208   1          int16 offset;
+ 209   1      
+ 210   1          ReadTunerRegister(MODULE_FM, CMD_FM_GET_QUALITY_DATA, MAX_READ_REG_QUAL_NUM);
+ 211   1      
+ 212   1          offset = ((int16)TunerReadBuff_Quality[READ_REG_OFFSET_H] << 8) |
+ 213   1                    TunerReadBuff_Quality[READ_REG_OFFSET_L];
+ 214   1      
+ 215   1          if (offset & 0x8000) {
+ 216   2              offset = (((~offset) + 1) & 0xFFFF);
+ 217   2              offset = -offset;
+ 218   2          }
+ 219   1      
+ 220   1          return offset;
+ 221   1      }
+ 222          
+ 223          void TEF6686_SeekStart(uint8 direction)
+ 224          {
+ 225   1          if (!F_Radio_Init_Ok) {
+ 226   2              return;
+ 227   2          }
+ 228   1      
+ 229   1          if (CurrentFreq > 2000) {
+ 230   2              I2C_Buf[0] = MODULE_FM;
+ 231   2              I2C_Buf[1] = CMD_FM_AM_TUNE_TO;
+ 232   2              I2C_Buf[2] = 0x01;
+ 233   2              I2C_Buf[3] = direction ? 0xFF : 0xFE;
+ 234   2              I2C_Buf[4] = 0xFF;
+ 235   2              I2C_Buf[5] = 0x00;
+ 236   2              I2C_Buf[6] = 0x01;
+ 237   2              I2C_Buf[7] = 0x00;
+ 238   2      
+ 239   2              WriteTunerRegister(8);
+ 240   2          } else {
+ 241   2              I2C_Buf[0] = MODULE_AM;
+C51 COMPILER V7.00  TEF6686                                                                10/21/2026 11:43:22 PAGE 5   
+
+ 242   2              I2C_Buf[1] = CMD_FM_AM_TUNE_TO;
+ 243   2              I2C_Buf[2] = 0x01;
+ 244   2              I2C_Buf[3] = direction ? 0xFF : 0xFE;
+ 245   2              I2C_Buf[4] = 0xFF;
+ 246   2              I2C_Buf[5] = 0x00;
+ 247   2              I2C_Buf[6] = 0x01;
+ 248   2              I2C_Buf[7] = 0x00;
+ 249   2      
+ 250   2              WriteTunerRegister(8);
+ 251   2          }
+ 252   1      }
+ 253          
+ 254          uint8 TEF6686_SeekStatus(void)
+ 255          {
+ 256   1          uint16 status;
+ 257   1      
+ 258   1          ReadTunerRegister(MODULE_FM, CMD_FM_AM_GET_QUALITY_STATUS, 2);
+ 259   1      
+ 260   1          status = ((uint16)TunerReadBuff_Quality[READ_REG_QUAL_STATUS_H] << 8) |
+ 261   1                    TunerReadBuff_Quality[READ_REG_QUAL_STATUS_L];
+ 262   1      
+ 263   1          if (status & 0x0100) {
+ 264   2              return 1;
+ 265   2          } else if (status & 0x0200) {
+ 266   2              return 2;
+ 267   2          } else {
+ 268   2              return 0;
+ 269   2          }
+ 270   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    700    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =     17       5
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

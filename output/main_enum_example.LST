@@ -1,0 +1,175 @@
+C51 COMPILER V7.00  MAIN_ENUM_EXAMPLE                                                      10/21/2026 11:43:22 PAGE 1   
+
+
+C51 COMPILER V7.00, COMPILATION OF MODULE MAIN_ENUM_EXAMPLE
+OBJECT MODULE PLACED IN output\main.obj
+COMPILER INVOKED BY: E:\keil\C51\BIN\c51.exe source\main_enum_example.c LARGE OBJECT(output\main.obj)
+
+stmt level    source
+
+   1          #include "stc8h.h"
+   2          #include "key_config.h"
+   3          #include "radio_ctrl.h"
+   4          
+   5          sbit LED_FM     = P1^2;
+   6          sbit LED_AM     = P1^3;
+   7          sbit LED_MUTE   = P1^4;
+   8          
+   9          static uint16 timer_cnt = 0;
+  10          
+  11          void Timer0_Init(void)
+  12          {
+  13   1          TMOD &= 0xF0;
+  14   1          TMOD |= 0x01;
+  15   1          TH0 = (65536 - 10000) / 256;
+  16   1          TL0 = (65536 - 10000) % 256;
+  17   1          ET0 = 1;
+  18   1          TR0 = 1;
+  19   1          EA = 1;
+  20   1      }
+  21          
+  22          void Timer0_ISR(void) interrupt 1
+  23          {
+  24   1          TH0 = (65536 - 10000) / 256;
+  25   1          TL0 = (65536 - 10000) % 256;
+  26   1          
+  27   1          timer_cnt++;
+  28   1          
+  29   1          if (timer_cnt >= 2) {
+  30   2              timer_cnt = 0;
+  31   2              Key_Config_Scan();
+  32   2          }
+  33   1      }
+  34          
+  35          void HandleKeyEvent(uint8 key_num, KeyEvent_e event)
+  36          {
+  37   1          switch (key_num) {
+  38   2              case KEY_FREQ_UP:
+  39   2                  switch (event) {
+  40   3                      case KEY_EVENT_SHORT:
+  41   3                          printf("KEY_FREQ_UP: Short press\n");
+  42   3                          RadioCtrl_FreqUp();
+  43   3                          break;
+  44   3                      case KEY_EVENT_LONG:
+  45   3                          printf("KEY_FREQ_UP: Long press\n");
+  46   3                          break;
+  47   3                      case KEY_EVENT_HOLD:
+  48   3                          printf("KEY_FREQ_UP: Holding...\n");
+  49   3                          RadioCtrl_FreqUp();
+  50   3                          break;
+  51   3                      case KEY_EVENT_RELEASE:
+  52   3                          printf("KEY_FREQ_UP: Released\n");
+  53   3                          break;
+  54   3                      default:
+  55   3                          break;
+C51 COMPILER V7.00  MAIN_ENUM_EXAMPLE                                                      10/21/2026 11:43:22 PAGE 2   
+
+  56   3                  }
+  57   2                  break;
+  58   2                  
+  59   2              case KEY_FREQ_DOWN:
+  60   2                  switch (event) {
+  61   3                      case KEY_EVENT_SHORT:
+  62   3                      case KEY_EVENT_HOLD:
+  63   3                          RadioCtrl_FreqDown();
+  64   3                          break;
+  65   3                      default:
+  66   3                          break;
+  67   3                  }
+  68   2                  break;
+  69   2                  
+  70   2              case KEY_MUTE:
+  71   2                  if (event == KEY_EVENT_SHORT) {
+  72   3                      if (RadioParam.mute_status) {
+  73   4                          RadioCtrl_MuteOff();
+  74   4                          LED_MUTE = 1;
+  75   4                      } else {
+  76   4                          RadioCtrl_MuteOn();
+  77   4                          LED_MUTE = 0;
+  78   4                      }
+  79   3                  }
+  80   2                  break;
+  81   2                  
+  82   2              case KEY_BAND_SWITCH:
+  83   2                  if (event == KEY_EVENT_SHORT) {
+  84   3                      if (RadioCtrl_GetBand() == BAND_FM) {
+  85   4                          RadioCtrl_SetBand(BAND_AM);
+  86   4                          LED_FM = 1;
+  87   4                          LED_AM = 0;
+  88   4                      } else {
+  89   4                          RadioCtrl_SetBand(BAND_FM);
+  90   4                          LED_FM = 0;
+  91   4                          LED_AM = 1;
+  92   4                      }
+  93   3                  }
+  94   2                  break;
+  95   2                  
+  96   2              default:
+  97   2                  break;
+  98   2          }
+  99   1      }
+ 100          
+ 101          void PollKeys(void)
+ 102          {
+ 103   1          uint8 i;
+ 104   1          
+ 105   1          for (i = 0; i < KEY_NUM; i++) {
+ 106   2              KeyEvent_e event = Key_GetEvent(i);
+ 107   2              
+ 108   2              if (event != KEY_EVENT_NONE) {
+ 109   3                  HandleKeyEvent(i, event);
+ 110   3                  Key_ClearEvent(i);
+ 111   3              }
+ 112   2          }
+ 113   1      }
+ 114          
+ 115          void main(void)
+ 116          {
+ 117   1          LED_FM = 1;
+C51 COMPILER V7.00  MAIN_ENUM_EXAMPLE                                                      10/21/2026 11:43:22 PAGE 3   
+
+ 118   1          LED_AM = 1;
+ 119   1          LED_MUTE = 1;
+ 120   1          
+ 121   1          P3M0 = 0x00;
+ 122   1          P3M1 = 0xFF;
+ 123   1          
+ 124   1          Timer0_Init();
+ 125   1          Key_Config_Init();
+ 126   1          RadioCtrl_Init();
+ 127   1          
+ 128   1          while (1) {
+ 129   2              PollKeys();
+ 130   2              
+ 131   2              {
+ 132   3                  static uint16 cnt = 0;
+ 133   3                  uint8 level;
+ 134   3                  uint16 freq;
+ 135   3      
+ 136   3                  cnt++;
+ 137   3                  if (cnt >= 10000) {
+ 138   4                      cnt = 0;
+ 139   4      
+ 140   4                      level = RadioCtrl_GetLevel();
+ 141   4                      freq = RadioCtrl_GetFreq();
+ 142   4      
+ 143   4                      printf("Freq: %d.%d MHz  Level: %d dBuV\n",
+ 144   4                             freq / 10, freq % 10, level);
+ 145   4                  }
+ 146   3              }
+ 147   2          }
+ 148   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    460    ----
+   CONSTANT SIZE    =    132    ----
+   XDATA SIZE       =      4       6
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
