@@ -1,4 +1,4 @@
-C51 COMPILER V7.00  TEF6686                                                                10/21/2026 11:43:22 PAGE 1   
+C51 COMPILER V7.00  TEF6686                                                                10/21/2026 18:48:35 PAGE 1   
 
 
 C51 COMPILER V7.00, COMPILATION OF MODULE TEF6686
@@ -62,7 +62,7 @@ stmt level    source
   53   1          I2C_Buf[1] = 0x00;
   54   1          I2C_Buf[2] = 0x75;
   55   1          I2C_Write(TEF6686_I2C_ADDR, 3);
-C51 COMPILER V7.00  TEF6686                                                                10/21/2026 11:43:22 PAGE 2   
+C51 COMPILER V7.00  TEF6686                                                                10/21/2026 18:48:35 PAGE 2   
 
   56   1      }
   57          
@@ -126,7 +126,7 @@ stmt level    source
  115   1      
  116   1          if (freq > 2000) {
  117   2              I2C_Buf[0] = MODULE_FM;
-C51 COMPILER V7.00  TEF6686                                                                10/21/2026 11:43:22 PAGE 3   
+C51 COMPILER V7.00  TEF6686                                                                10/21/2026 18:48:35 PAGE 3   
 
  118   2              I2C_Buf[1] = CMD_FM_AM_TUNE_TO;
  119   2              I2C_Buf[2] = 0x01;
@@ -190,7 +190,7 @@ stmt level    source
  177   1                   TunerReadBuff_Quality[READ_REG_LEVEL_L];
  178   1      
  179   1          return (uint8)(level / 10);
-C51 COMPILER V7.00  TEF6686                                                                10/21/2026 11:43:22 PAGE 4   
+C51 COMPILER V7.00  TEF6686                                                                10/21/2026 18:48:35 PAGE 4   
 
  180   1      }
  181          
@@ -254,7 +254,7 @@ stmt level    source
  239   2              WriteTunerRegister(8);
  240   2          } else {
  241   2              I2C_Buf[0] = MODULE_AM;
-C51 COMPILER V7.00  TEF6686                                                                10/21/2026 11:43:22 PAGE 5   
+C51 COMPILER V7.00  TEF6686                                                                10/21/2026 18:48:35 PAGE 5   
 
  242   2              I2C_Buf[1] = CMD_FM_AM_TUNE_TO;
  243   2              I2C_Buf[2] = 0x01;
@@ -285,10 +285,26 @@ stmt level    source
  268   2              return 0;
  269   2          }
  270   1      }
+ 271          
+ 272          uint8 TEF6686_GetStereoStatus(void)
+ 273          {
+ 274   1          uint16 status;
+ 275   1      
+ 276   1          ReadTunerRegister(MODULE_FM, CMD_FM_AM_GET_QUALITY_STATUS, 2);
+ 277   1      
+ 278   1          status = ((uint16)TunerReadBuff_Quality[READ_REG_QUAL_STATUS_H] << 8) |
+ 279   1                    TunerReadBuff_Quality[READ_REG_QUAL_STATUS_L];
+ 280   1      
+ 281   1          if (status & 0x0001) {
+ 282   2              return 1;
+ 283   2          } else {
+ 284   2              return 0;
+ 285   2          }
+ 286   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    700    ----
+   CODE SIZE        =    725    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =     17       5
    PDATA SIZE       =   ----    ----

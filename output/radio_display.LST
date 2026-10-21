@@ -1,0 +1,186 @@
+C51 COMPILER V7.00  RADIO_DISPLAY                                                          10/21/2026 18:48:36 PAGE 1   
+
+
+C51 COMPILER V7.00, COMPILATION OF MODULE RADIO_DISPLAY
+OBJECT MODULE PLACED IN output\radio_display.obj
+COMPILER INVOKED BY: E:\keil\C51\BIN\c51.exe source\radio_display.c LARGE OBJECT(output\radio_display.obj)
+
+stmt level    source
+
+   1          #include "radio_display.h"
+   2          #include "tef6686.h"
+   3          #include <stdio.h>
+   4          
+   5          sbit LED_STEREO = P1^5;
+   6          
+   7          static uint16 timer_1s_cnt = 0;
+   8          static uint8 stereo_status = 0;
+   9          static uint8 rssi_value = 0;
+  10          static uint8 station_received = 0;
+  11          static uint8 seek_state = SEEK_IDLE;
+  12          static uint16 seek_timer_cnt = 0;
+  13          
+  14          static void Display_Stereo(void);
+  15          static void ReadStatus_1s(void);
+  16          static void SeekProcess(void);
+  17          
+  18          void RadioDisplay_Init(void)
+  19          {
+  20   1          LED_STEREO = 1;
+  21   1          timer_1s_cnt = 0;
+  22   1          stereo_status = 0;
+  23   1          rssi_value = 0;
+  24   1          station_received = 0;
+  25   1          seek_state = SEEK_IDLE;
+  26   1          seek_timer_cnt = 0;
+  27   1      }
+  28          
+  29          void RadioDisplay_TimerTick(void)
+  30          {
+  31   1          timer_1s_cnt++;
+  32   1      }
+  33          
+  34          static void Display_Stereo(void)
+  35          {
+  36   1          if (station_received && stereo_status) {
+  37   2              LED_STEREO = 0;
+  38   2          } else {
+  39   2              LED_STEREO = 1;
+  40   2          }
+  41   1      }
+  42          
+  43          static void ReadStatus_1s(void)
+  44          {
+  45   1          if (timer_1s_cnt >= 100) {
+  46   2              timer_1s_cnt = 0;
+  47   2      
+  48   2              rssi_value = RadioCtrl_GetLevel();
+  49   2      
+  50   2              if (rssi_value >= RadioParam.fm_loc_sstop) {
+  51   3                  station_received = 1;
+  52   3              } else {
+  53   3                  station_received = 0;
+  54   3              }
+  55   2      
+C51 COMPILER V7.00  RADIO_DISPLAY                                                          10/21/2026 18:48:36 PAGE 2   
+
+  56   2              if (station_received) {
+  57   3                  stereo_status = TEF6686_GetStereoStatus();
+  58   3              }
+  59   2      
+  60   2              Display_Stereo();
+  61   2          }
+  62   1      }
+  63          
+  64          static void SeekProcess(void)
+  65          {
+  66   1          uint8 status;
+  67   1      
+  68   1          if (seek_state != SEEK_IN_PROGRESS) {
+  69   2              return;
+  70   2          }
+  71   1      
+  72   1          seek_timer_cnt++;
+  73   1      
+  74   1          if (seek_timer_cnt >= 50) {
+  75   2              seek_timer_cnt = 0;
+  76   2      
+  77   2              status = TEF6686_SeekStatus();
+  78   2      
+  79   2              if (status == 1) {
+  80   3                  seek_state = SEEK_IDLE;
+  81   3                  rssi_value = RadioCtrl_GetLevel();
+  82   3      
+  83   3                  if (rssi_value >= RadioParam.fm_loc_sstop) {
+  84   4                      station_received = 1;
+  85   4                      stereo_status = TEF6686_GetStereoStatus();
+  86   4                  }
+  87   3      
+  88   3                  Display_Stereo();
+  89   3      
+  90   3                  printf(">>> Seek Complete! Freq: %d.%d MHz, RSSI: %d dBuV, Stereo: %s\n",
+  91   3                         RadioCtrl_GetFreq() / 10,
+  92   3                         RadioCtrl_GetFreq() % 10,
+  93   3                         rssi_value,
+  94   3                         station_received ? (stereo_status ? "Yes" : "No") : "No");
+  95   3              } else if (status == 2) {
+  96   3                  seek_state = SEEK_IDLE;
+  97   3                  station_received = 0;
+  98   3                  stereo_status = 0;
+  99   3                  Display_Stereo();
+ 100   3      
+ 101   3                  printf(">>> Seek Failed: No station found\n");
+ 102   3              }
+ 103   2          }
+ 104   1      }
+ 105          
+ 106          void RadioDisplay_Process(void)
+ 107          {
+ 108   1          ReadStatus_1s();
+ 109   1          SeekProcess();
+ 110   1      }
+ 111          
+ 112          void RadioDisplay_SeekStart(uint8 direction)
+ 113          {
+ 114   1          if (seek_state == SEEK_IDLE) {
+ 115   2              if (direction) {
+ 116   3                  RadioCtrl_SeekUp();
+ 117   3              } else {
+C51 COMPILER V7.00  RADIO_DISPLAY                                                          10/21/2026 18:48:36 PAGE 3   
+
+ 118   3                  RadioCtrl_SeekDown();
+ 119   3              }
+ 120   2              seek_state = SEEK_IN_PROGRESS;
+ 121   2              seek_timer_cnt = 0;
+ 122   2              station_received = 0;
+ 123   2              stereo_status = 0;
+ 124   2              printf("Seek %s...\n", direction ? "UP" : "DOWN");
+ 125   2          }
+ 126   1      }
+ 127          
+ 128          uint8 RadioDisplay_IsSeeking(void)
+ 129          {
+ 130   1          return (seek_state == SEEK_IN_PROGRESS);
+ 131   1      }
+ 132          
+ 133          uint8 RadioDisplay_GetStereoStatus(void)
+ 134          {
+ 135   1          return stereo_status;
+ 136   1      }
+ 137          
+ 138          uint8 RadioDisplay_GetRssiValue(void)
+ 139          {
+ 140   1          return rssi_value;
+ 141   1      }
+ 142          
+ 143          uint8 RadioDisplay_IsStationReceived(void)
+ 144          {
+ 145   1          return station_received;
+ 146   1      }
+ 147          
+ 148          void RadioDisplay_PrintStatus(void)
+ 149          {
+ 150   1          uint16 freq;
+ 151   1      
+ 152   1          freq = RadioCtrl_GetFreq();
+ 153   1      
+ 154   1          printf("Freq: %d.%d MHz  RSSI: %d dBuV  Stereo: %s\n",
+ 155   1                 freq / 10, freq % 10,
+ 156   1                 rssi_value,
+ 157   1                 station_received ?
+ 158   1                     (stereo_status ? "Yes" : "No") : "No Station");
+ 159   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    603    ----
+   CONSTANT SIZE    =    180    ----
+   XDATA SIZE       =      8       4
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

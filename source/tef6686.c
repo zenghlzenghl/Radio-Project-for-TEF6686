@@ -268,3 +268,19 @@ uint8 TEF6686_SeekStatus(void)
         return 0;
     }
 }
+
+uint8 TEF6686_GetStereoStatus(void)
+{
+    uint16 status;
+
+    ReadTunerRegister(MODULE_FM, CMD_FM_AM_GET_QUALITY_STATUS, 2);
+
+    status = ((uint16)TunerReadBuff_Quality[READ_REG_QUAL_STATUS_H] << 8) |
+              TunerReadBuff_Quality[READ_REG_QUAL_STATUS_L];
+
+    if (status & 0x0001) {
+        return 1;
+    } else {
+        return 0;
+    }
+}

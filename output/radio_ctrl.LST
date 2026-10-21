@@ -1,4 +1,4 @@
-C51 COMPILER V7.00  RADIO_CTRL                                                             10/21/2026 11:43:22 PAGE 1   
+C51 COMPILER V7.00  RADIO_CTRL                                                             10/21/2026 18:48:36 PAGE 1   
 
 
 C51 COMPILER V7.00, COMPILATION OF MODULE RADIO_CTRL
@@ -62,7 +62,7 @@ stmt level    source
   53   1          
   54   1          RadioCtrl_SetFreq(freq);
   55   1      }
-C51 COMPILER V7.00  RADIO_CTRL                                                             10/21/2026 11:43:22 PAGE 2   
+C51 COMPILER V7.00  RADIO_CTRL                                                             10/21/2026 18:48:36 PAGE 2   
 
   56          
   57          uint8 RadioCtrl_GetBand(void)
@@ -126,7 +126,7 @@ stmt level    source
  115          {
  116   1          RadioParam.signal_meter = TEF6686_GetLevel();
  117   1          return RadioParam.signal_meter;
-C51 COMPILER V7.00  RADIO_CTRL                                                             10/21/2026 11:43:22 PAGE 3   
+C51 COMPILER V7.00  RADIO_CTRL                                                             10/21/2026 18:48:36 PAGE 3   
 
  118   1      }
  119          

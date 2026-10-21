@@ -1,6 +1,7 @@
 #include "stc8h.h"
 #include "key_config.h"
 #include "radio_ctrl.h"
+#include "radio_display.h"
 
 sbit LED_FM     = P1^2;
 sbit LED_AM     = P1^3;
@@ -23,9 +24,11 @@ void Timer0_ISR(void) interrupt 1
 {
     TH0 = (65536 - 10000) / 256;
     TL0 = (65536 - 10000) % 256;
-    
+
     timer_cnt++;
-    
+
+    RadioDisplay_TimerTick();
+
     if (timer_cnt >= 2) {
         timer_cnt = 0;
         Key_Config_Scan();
@@ -55,7 +58,7 @@ void HandleKeyEvent(uint8 key_num, KeyEvent_e event)
                     break;
             }
             break;
-            
+
         case KEY_FREQ_DOWN:
             switch (event) {
                 case KEY_EVENT_SHORT:
@@ -66,7 +69,23 @@ void HandleKeyEvent(uint8 key_num, KeyEvent_e event)
                     break;
             }
             break;
-            
+
+        case KEY_SEEK_UP:
+            if (event == KEY_EVENT_SHORT) {
+                if (!RadioDisplay_IsSeeking()) {
+                    RadioDisplay_SeekStart(1);
+                }
+            }
+            break;
+
+        case KEY_SEEK_DOWN:
+            if (event == KEY_EVENT_SHORT) {
+                if (!RadioDisplay_IsSeeking()) {
+                    RadioDisplay_SeekStart(0);
+                }
+            }
+            break;
+
         case KEY_MUTE:
             if (event == KEY_EVENT_SHORT) {
                 if (RadioParam.mute_status) {
@@ -78,7 +97,7 @@ void HandleKeyEvent(uint8 key_num, KeyEvent_e event)
                 }
             }
             break;
-            
+
         case KEY_BAND_SWITCH:
             if (event == KEY_EVENT_SHORT) {
                 if (RadioCtrl_GetBand() == BAND_FM) {
@@ -92,7 +111,7 @@ void HandleKeyEvent(uint8 key_num, KeyEvent_e event)
                 }
             }
             break;
-            
+
         default:
             break;
     }
@@ -101,10 +120,10 @@ void HandleKeyEvent(uint8 key_num, KeyEvent_e event)
 void PollKeys(void)
 {
     uint8 i;
-    
+
     for (i = 0; i < KEY_NUM; i++) {
         KeyEvent_e event = Key_GetEvent(i);
-        
+
         if (event != KEY_EVENT_NONE) {
             HandleKeyEvent(i, event);
             Key_ClearEvent(i);
@@ -117,31 +136,27 @@ void main(void)
     LED_FM = 1;
     LED_AM = 1;
     LED_MUTE = 1;
-    
+
     P3M0 = 0x00;
     P3M1 = 0xFF;
-    
+
     Timer0_Init();
     Key_Config_Init();
     RadioCtrl_Init();
-    
+    RadioDisplay_Init();
+
     while (1) {
         PollKeys();
-        
+
+        RadioDisplay_Process();
+
         {
             static uint16 cnt = 0;
-            uint8 level;
-            uint16 freq;
 
             cnt++;
             if (cnt >= 10000) {
                 cnt = 0;
-
-                level = RadioCtrl_GetLevel();
-                freq = RadioCtrl_GetFreq();
-
-                printf("Freq: %d.%d MHz  Level: %d dBuV\n",
-                       freq / 10, freq % 10, level);
+                RadioDisplay_PrintStatus();
             }
         }
     }

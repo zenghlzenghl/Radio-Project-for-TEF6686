@@ -140,6 +140,7 @@ uint8 TEF6686_GetWAM(void);
 int16 TEF6686_GetOffset(void);
 void TEF6686_SeekStart(uint8 direction);
 uint8 TEF6686_SeekStatus(void);
+uint8 TEF6686_GetStereoStatus(void);
 void TEF6686_PowerOn(void);
 void TEF6686_PowerOff(void);
 

@@ -1,4 +1,4 @@
-C51 COMPILER V7.00  KEY                                                                    10/21/2026 11:43:22 PAGE 1   
+C51 COMPILER V7.00  KEY                                                                    10/21/2026 18:48:36 PAGE 1   
 
 
 C51 COMPILER V7.00, COMPILATION OF MODULE KEY
@@ -62,7 +62,7 @@ stmt level    source
   53   2              return key_list[key_num].pressed_flag;
   54   2          }
   55   1          return 0;
-C51 COMPILER V7.00  KEY                                                                    10/21/2026 11:43:22 PAGE 2   
+C51 COMPILER V7.00  KEY                                                                    10/21/2026 18:48:36 PAGE 2   
 
   56   1      }
   57          
@@ -126,7 +126,7 @@ stmt level    source
  115   4                      if (k->callback) {
  116   5                          k->callback(i, KEY_EVENT_LONG);
  117   5                      }
-C51 COMPILER V7.00  KEY                                                                    10/21/2026 11:43:22 PAGE 3   
+C51 COMPILER V7.00  KEY                                                                    10/21/2026 18:48:36 PAGE 3   
 
  118   4                  }
  119   3                  

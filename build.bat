@@ -124,13 +124,16 @@ echo [COMPILE] key_config.c
 echo [COMPILE] radio_ctrl.c
 %C51% source\radio_ctrl.c LARGE OBJECT(%OUTDIR%\radio_ctrl.obj)
 
+echo [COMPILE] radio_display.c
+%C51% source\radio_display.c LARGE OBJECT(%OUTDIR%\radio_display.obj)
+
 echo [COMPILE] main_enum_example.c (使用枚举版本)
 %C51% source\main_enum_example.c LARGE OBJECT(%OUTDIR%\main.obj)
 
 :: 移动列表文件到输出目录
 move source\*.lst %OUTDIR% 2>nul
 del /q source\*.OBJ 2>nul
-echo [INFO] 编译完成，共6个源文件
+echo [INFO] 编译完成，共7个源文件
 echo.
 
 :: ==============================================
@@ -140,7 +143,7 @@ echo [INFO] 开始链接目标文件...
 cd %OUTDIR%
 
 echo [LINK] 正在生成radio.abs...
-%BL51% i2c_stc8h.obj,tef6686.obj,key.obj,key_config.obj,radio_ctrl.obj,main.obj TO radio.abs
+%BL51% i2c_stc8h.obj,tef6686.obj,key.obj,key_config.obj,radio_ctrl.obj,radio_display.obj,main.obj TO radio.abs
 
 echo [OH51] 正在生成hex文件...
 %OH51% radio.abs
